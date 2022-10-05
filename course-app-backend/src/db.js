@@ -1,3 +1,3 @@
-const db = new sqlite3.Database("my-database.db")
+const sqlite = require('sqlite3')
 
-db.run("Your SQL query")
+const db = new sqlite.Database("course-database.db")

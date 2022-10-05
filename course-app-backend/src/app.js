@@ -1,5 +1,4 @@
 const express = require('express')
-const sqlite3 = require('sqlite3')
 const jwt = require('jsonwebtoken')
 const hasTypes = require('./has-types.js')
 const db = require('./db.js')
@@ -10,4 +9,5 @@ app.get("/", function(request, response) {
     response.send("Hello, World")
 })
 
-app.listen(8000)
+
+app.listen(3000)
