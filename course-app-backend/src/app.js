@@ -1,209 +1,236 @@
 const express = require('express')
 const jwt = require('jsonwebtoken')
-const hasTypes = require('./has-types.js')
-const db = require('./db.js')
+    //const db = require('./db.js')
+const sqlite3 = require('sqlite3')
 
+// Create the database connection
+const db = new sqlite3.Database('./course-database.db')
+
+// Create tables in the database.
+db.run(`CREATE TABLE IF NOT EXISTS accounts (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	username TEXT,
+	password TEXT
+)`)
+
+db.run(`CREATE TABLE IF NOT EXISTS ads (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	type TEXT,
+	weight INTEGER,
+	accountId INTEGER
+)`)
+    // OPTIONAL TODO: Make use of foreign key constraints.
+
+// Create the app object we can use to tell express
+// how to handle incoming HTTP requests.
 const app = express()
-
-// Constants used for validation of resources.
-const USERNAME_MIN_LENGTH = 3
-const USERNAME_MAX_LENGTH = 9
-const MIN_PASSWORD_LENGTH = 6 // Should be higher, is low to facilitate testing.
-
-const TITLE_MIN_LENGTH = 5
-const TITLE_MAX_LENGTH = 50
-const DESCRIPTION_MIN_LENGTH = 20
-const DESCRIPTION_MAX_LENGTH = 500
-
-const ACCESS_TOKEN_SECRET = "sdfsdsd4flkjdsflkdsj"
-const ID_TOKEN_SECRET = "fdkjjlpadfglfd6kyeu"
 
 // Enable CORS.
 app.use(function(request, response, next) {
-
-    // Allow client-side JS from the following websites to send requests to us:
-    // (not optimal, for better security, change * to the URI of your frontend)
     response.setHeader("Access-Control-Allow-Origin", "*")
-
-    // Allow client-side JS to send requests with the following methods:
-    response.setHeader("Access-Control-Allow-Methods", "*")
-
-    // Allow client-side JS to send requests with the following headers:
-    // (needed for the Authorization and Content-Type headers)
+    response.setHeader("Access-Control-Allow-Method", "*")
     response.setHeader("Access-Control-Allow-Headers", "*")
-
-    // Allow client-side JS to read the following headers in the response:
-    // (in addition to Cache-Control, Content-Language, Content-Type
-    // Expires, Last-Modified, Pragma).
-    // (needed for the Location header)
     response.setHeader("Access-Control-Expose-Headers", "*")
-
     next()
+})
+
+// Add functionality for reading out bodies in requests
+// written in JSON format.
+app.use(
+    express.json()
+)
+
+// POST /tokens
+// Content-Type: application/json
+// {"username": "Alice", "password": "abc123"}
+app.post('/tokens', function(request, response) {
+
+    const username = request.body.username
+    const password = request.body.password
+
+    const query = "SELECT * FROM accounts WHERE username = ? AND password = ?"
+    const values = [username, password]
+
+    db.get(query, values, function(error, account) {
+        if (error) {
+            console.log(error)
+            response.status(500).end()
+        } else if (account) {
+            // Successful login!
+
+            const accessToken = jsonwebtoken.sign({
+                accountId: account.id,
+            }, "oiuiuytrtefxfx")
+
+            const idToken = jsonwebtoken.sign({
+                accountId: account.id,
+                username: account.username,
+            }, "lkjlkj")
+
+            response.status(200).json({
+                accessToken,
+                idToken
+            })
+
+        } else {
+            response.status(400).json(["wrongCredentials"])
+        }
+    })
 
 })
 
-// Try to extract info from potential access token in the request.
-app.use(function(request, response, next) {
+// GET /accounts
+app.get("/accounts", function(request, response) {
 
-    try {
+    const query = "SELECT * FROM accounts"
 
-        const authorizationHeader = request.get("Authorization")
-        const accessToken = authorizationHeader.substring(
-            "Bearer ".length,
-        )
+    db.all(query, function(error, accounts) {
 
-        jwt.verify(accessToken, ACCESS_TOKEN_SECRET, function(error, payload) {
+        if (error) {
+            console.log(error)
+            response.status(500).end()
+        } else {
+            response.status(200).json(accounts)
+        }
+
+    })
+
+})
+
+// POST /accounts
+// Content-Type: application/json
+// {"username": "Alice", "password": "abc123"}
+app.post('/accounts', function(request, response) {
+
+    const username = request.body.username
+    const password = request.body.password
+
+    const errorCodes = []
+
+    if (username == "") {
+        errorCodes.push("usernameIsEmpty")
+    }
+
+    if (password == "") {
+        errorCodes.push("passWordIsEmpty")
+    }
+
+    if (0 < errorCodes.length) {
+        response.status(400).json(errorCodes)
+    } else {
+
+        const query = "INSERT INTO accounts (username, password) VALUES (?, ?)"
+        const values = [username, password]
+
+        db.run(query, values, function(error) {
             if (error) {
-                console.log(`Retrieved invalid access token "${accessToken}".`)
+                response.status(500).end()
             } else {
-                request.accountId = payload.accountId
+                response.status(201).end()
             }
-            next()
         })
 
-    } catch (error) {
-        next()
     }
 
 })
 
-// Add middleware to parse the boyd in incoming HTTP requests.
-app.use(express.json())
-app.use(express.urlencoded({
-    extended: false
-}))
+// GET /ads
+app.get("/ads", function(request, response) {
 
-// Requests for account resources.
-app.get("/accounts", function(request, response) {
-    db.getAllAccounts(function(errors, accounts) {
-        if (errors.length == 0) {
-            accounts.forEach(account => delete account.password)
-            response.status(200).json(accounts)
-        } else {
+    const query = "SELECT * FROM ads"
+
+    db.all(query, function(error, ads) {
+
+        if (error) {
+            console.log(error)
             response.status(500).end()
+        } else {
+            response.status(200).json(ads)
         }
+
     })
+
 })
 
-app.get("/accounts/:id", function(request, response) {
+// GET /ads/57
+app.get("/ads/:id", function(request, response) {
 
     const id = request.params.id
 
-    db.getAccountById(id, function(errors, account) {
-        if (errors.length == 0) {
-            if (account) {
-                delete account.password
-                response.status(200).json(account)
+    const query = "SELECT * FROM ads WHERE id = ?"
+    const values = [id]
+
+    db.get(query, values, function(error, ad) {
+
+        if (error) {
+            response.status(500).end()
+        } else if (ad) {
+            response.status(200).json(ad)
+        } else {
+            response.status(404).end()
+        }
+
+    })
+
+})
+
+// POST /ads
+// Content-Type: application/json
+// Authorization: THE_ACCESS_TOKEN
+// {"type": "bike", "weight": 4, "accountId": 7}
+app.post('/ads', function(request, response) {
+
+    const accessToken = request.get("Authorization")
+
+    // TODO: "oiuiuytrtefxfx" is also used at another place;
+    // better to put it in a constant, and refer to the constant
+    // at both places.
+    const payload = jsonwebtoken.verify(accessToken, "oiuiuytrtefxfx")
+
+    const type = request.body.type
+    const weight = request.body.weight
+    const accountId = request.body.accountId
+
+    // Send back 401 if the user tries to create an ad for
+    // another account than the one he is logged in on.
+    if (accountId != payload.accountId) {
+        response.status(401).end()
+        return
+    }
+
+    // Do validation.
+    const errorCodes = []
+
+    if (type != "shark" && type != "abborre") {
+        errorCodes.push("invalidType")
+    }
+
+    if (weight < 0) {
+        errorCodes.push("invalidWeight")
+    }
+
+    // If we have validation errors, send them back,
+    // otherwise insert the ad into the database.
+    if (0 < errorCodes.length) {
+        response.status(400).json(errorCodes)
+    } else {
+
+        const query = "INSERT INTO ads (type, weight, accountId) VALUES (?, ?, ?)"
+        const values = [type, weight, accountId]
+
+        db.run(query, values, function(error) {
+            if (error) {
+                response.status(500).end()
             } else {
-                response.status(404).end()
+                response.status(201).end()
             }
-        } else {
-            response.status(500).end()
-        }
-    })
+        })
+
+    }
 
 })
 
-app.post("/accounts", function(request, response) {
-
-    const account = request.body
-
-    // Check that the account contains all expected properties.
-    const accountTypes = {
-        username: String,
-        password: String
-    }
-
-    if (!hasTypes(account, accountTypes)) {
-        response.status(422).end()
-        return
-    }
-
-    // Validate the account.
-    const validationErrors = []
-
-    if (account.username.length < USERNAME_MIN_LENGTH) {
-        validationErrors.push("usernameTooShort")
-    } else if (USERNAME_MAX_LENGTH < account.username.length) {
-        validationErrors.push("usernameTooLong")
-    }
-
-    if (account.password.length < MIN_PASSWORD_LENGTH) {
-        validationErrors.push("passwordTooShort")
-    }
-
-    if (0 < validationErrors.length) {
-        response.status(400).json(validationErrors)
-        return
-    }
-
-    // Try to create the account.
-    db.createAccount(account, function(errors, id) {
-        if (errors.length == 0) {
-            response.setHeader("Location", "/accounts/" + id)
-            response.status(201).end()
-        } else if (errors.includes("usernameTaken")) {
-            response.status(400).json(errors)
-        } else {
-            response.status(500).end()
-        }
-    })
-
-})
-
-
-// Requests for token resources.
-app.post("/tokens", function(request, response) {
-
-    const grantInfo = request.body
-
-    // Check that grantInfo contains all expected properties.
-    const grantInfoTypes = {
-        grant_type: String,
-        username: String,
-        password: String
-    }
-
-    if (!hasTypes(grantInfo, grantInfoTypes)) {
-        response.status(400).json({ error: "invalid_request" })
-        return
-    }
-
-    // Check that the grant type is supported.
-    if (grantInfo.grant_type != "password") {
-        response.status(400).json({ error: "unsupported_grant_type" })
-        return
-    }
-
-    db.getAccountByUsername(grantInfo.username, function(errors, account) {
-        if (errors.includes("databaseError")) {
-            response.status(500).end()
-        } else if (!account) {
-            response.status(400).json({ error: "invalid_grant" })
-        } else if (account.password != grantInfo.password) {
-            response.status(400).json({ error: "invalid_grant" })
-        } else {
-
-            // Generate and send back access token + id token.
-            const accessToken = jwt.sign({
-                accountId: account.id
-            }, ACCESS_TOKEN_SECRET)
-
-            const idToken = jwt.sign({
-                sub: account.id,
-                preferred_username: account.username
-            }, ID_TOKEN_SECRET)
-
-            response.status(200).json({
-                token_type: "Bearer",
-                access_token: accessToken,
-                id_token: idToken
-            })
-
-        }
-    })
-
-})
-
-
+// Tell express to start listening for incoming
+// HTTP requests on port 3000.
+// (http://localhost:3000)
 app.listen(3000)
