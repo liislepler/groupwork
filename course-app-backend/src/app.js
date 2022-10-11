@@ -1,7 +1,7 @@
 const express = require('express')
-const jwt = require('jsonwebtoken')
     //const db = require('./db.js')
 const sqlite3 = require('sqlite3')
+const jsonwebtoken = require('jsonwebtoken')
 
 // Create the database connection
 const db = new sqlite3.Database('./course-database.db')
@@ -13,10 +13,11 @@ db.run(`CREATE TABLE IF NOT EXISTS accounts (
 	password TEXT
 )`)
 
-db.run(`CREATE TABLE IF NOT EXISTS ads (
+db.run(`CREATE TABLE IF NOT EXISTS notes (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	type TEXT,
-	weight INTEGER,
+	title TEXT,
+	description TEXT,
+    course TEXT,
 	accountId INTEGER
 )`)
     // OPTIONAL TODO: Make use of foreign key constraints.
@@ -134,10 +135,10 @@ app.post('/accounts', function(request, response) {
 
 })
 
-// GET /ads
-app.get("/ads", function(request, response) {
+// GET /notes
+app.get("/notes", function(request, response) {
 
-    const query = "SELECT * FROM ads"
+    const query = "SELECT * FROM notes"
 
     db.all(query, function(error, ads) {
 
@@ -152,8 +153,8 @@ app.get("/ads", function(request, response) {
 
 })
 
-// GET /ads/57
-app.get("/ads/:id", function(request, response) {
+// GET /notes/57
+app.get("/notes/:id", function(request, response) {
 
     const id = request.params.id
 
@@ -174,11 +175,11 @@ app.get("/ads/:id", function(request, response) {
 
 })
 
-// POST /ads
+// POST /notes
 // Content-Type: application/json
 // Authorization: THE_ACCESS_TOKEN
 // {"type": "bike", "weight": 4, "accountId": 7}
-app.post('/ads', function(request, response) {
+app.post('/notes', function(request, response) {
 
     const accessToken = request.get("Authorization")
 
@@ -201,10 +202,6 @@ app.post('/ads', function(request, response) {
     // Do validation.
     const errorCodes = []
 
-    if (type != "shark" && type != "abborre") {
-        errorCodes.push("invalidType")
-    }
-
     if (weight < 0) {
         errorCodes.push("invalidWeight")
     }
@@ -215,7 +212,7 @@ app.post('/ads', function(request, response) {
         response.status(400).json(errorCodes)
     } else {
 
-        const query = "INSERT INTO ads (type, weight, accountId) VALUES (?, ?, ?)"
+        const query = "INSERT INTO notes (type, weight, accountId) VALUES (?, ?, ?)"
         const values = [type, weight, accountId]
 
         db.run(query, values, function(error) {

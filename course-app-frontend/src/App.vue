@@ -2,12 +2,12 @@
     export default {
         data(){
             return {
-            user: {
-                isSignedIn: false,
-                username: "",
-                password: "",
-                id: 0,
-            }
+                user: {
+                    isSignedIn: false,
+                    accessToken: "",
+                    username: "",
+                    accountId: 0,
+			}
             }
         }
     }
@@ -19,7 +19,7 @@
                 <div v-if="user.isSignedIn">
                     <p><b>{{user.username}}</b>
                     <br>
-                    Account ID: <b>{{user.id}}</b></p>
+                    Account ID: <b>{{user.accountId}}</b></p>
                     <button class="signout"><RouterLink to="/sign-out">Sign Out</RouterLink></button>
                 </div>
                 <div v-else>
