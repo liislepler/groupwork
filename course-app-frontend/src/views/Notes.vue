@@ -1,5 +1,8 @@
 <script>
 	export default {
+		props: {
+		user: Object,
+        },
 		data(){
 			return {
 				notes: [],
@@ -31,7 +34,7 @@
 				<li v-for="note in notes">
 					<RouterLink :to="`/notes/${note.id}`">
 						{{note.title}} 
-                        {{note.description}}
+                        {{note.notetext}}
                         {{note.course}}
                         {{note.accountId}}
 					</RouterLink>

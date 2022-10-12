@@ -1,4 +1,6 @@
 <script>
+    import jwtDecode from 'jwt-decode'
+
     export default {
         props: {
 		user: Object,
@@ -41,6 +43,9 @@
                             this.user.username = info.username
                             
                         })
+
+                        console.log("signed in")
+                        this.user.isSignedIn = true
                         
                     }else if(response.status == 401){
                         this.errors.push("Not authorized!")
@@ -65,7 +70,7 @@
 		<div>
 			Password: <input type="password" v-model="password">
 		</div>
-		<button @click="handleSubmission">Login</button>
+		<button @click="handleSubmission">Sign In</button>
     </div>
 </template>
 

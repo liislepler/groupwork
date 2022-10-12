@@ -3,6 +3,7 @@ const express = require('express')
 const sqlite3 = require('sqlite3')
 const jsonwebtoken = require('jsonwebtoken')
 
+
 // Create the database connection
 const db = new sqlite3.Database('./course-database.db')
 
@@ -16,7 +17,7 @@ db.run(`CREATE TABLE IF NOT EXISTS accounts (
 db.run(`CREATE TABLE IF NOT EXISTS notes (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	title TEXT,
-	description TEXT,
+	notetext TEXT,
     course TEXT,
 	accountId INTEGER
 )`)
@@ -29,7 +30,7 @@ const app = express()
 // Enable CORS.
 app.use(function(request, response, next) {
     response.setHeader("Access-Control-Allow-Origin", "*")
-    response.setHeader("Access-Control-Allow-Method", "*")
+    response.setHeader("Access-Control-Allow-Methods", "*")
     response.setHeader("Access-Control-Allow-Headers", "*")
     response.setHeader("Access-Control-Expose-Headers", "*")
     next()
@@ -158,15 +159,15 @@ app.get("/notes/:id", function(request, response) {
 
     const id = request.params.id
 
-    const query = "SELECT * FROM ads WHERE id = ?"
+    const query = "SELECT * FROM notes WHERE id = ?"
     const values = [id]
 
-    db.get(query, values, function(error, ad) {
+    db.get(query, values, function(error, note) {
 
         if (error) {
             response.status(500).end()
-        } else if (ad) {
-            response.status(200).json(ad)
+        } else if (note) {
+            response.status(200).json(note)
         } else {
             response.status(404).end()
         }
@@ -188,8 +189,9 @@ app.post('/notes', function(request, response) {
     // at both places.
     const payload = jsonwebtoken.verify(accessToken, "oiuiuytrtefxfx")
 
-    const type = request.body.type
-    const weight = request.body.weight
+    const title = request.body.title
+    const notetext = request.body.notetext
+    const course = request.body.course
     const accountId = request.body.accountId
 
     // Send back 401 if the user tries to create an ad for
@@ -202,9 +204,6 @@ app.post('/notes', function(request, response) {
     // Do validation.
     const errorCodes = []
 
-    if (weight < 0) {
-        errorCodes.push("invalidWeight")
-    }
 
     // If we have validation errors, send them back,
     // otherwise insert the ad into the database.
@@ -212,8 +211,8 @@ app.post('/notes', function(request, response) {
         response.status(400).json(errorCodes)
     } else {
 
-        const query = "INSERT INTO notes (type, weight, accountId) VALUES (?, ?, ?)"
-        const values = [type, weight, accountId]
+        const query = "INSERT INTO notes (title, notetext, course, accountId) VALUES (?, ?, ?, ?)"
+        const values = [title, notetext, course, accountId]
 
         db.run(query, values, function(error) {
             if (error) {

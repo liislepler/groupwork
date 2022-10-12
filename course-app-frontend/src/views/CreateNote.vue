@@ -6,7 +6,7 @@
         data(){
             return {
                 title: "",
-                description: "",
+                notetext: "",
                 course: "",
                 noteHasBeenCreated: false,
                 errors: []
@@ -16,8 +16,8 @@
             createNote(){
                 
                 const note = {
-                    title: this.type,
-                    description: this.weight,
+                    title: this.title,
+                    notetext: this.notetext,
                     course: this.course,
                     accountId: this.user.accountId
                 }
@@ -66,7 +66,7 @@
 				Title: <input type="text" v-model="title">
 			</div>
 			<div>
-				Description: <input type="text" v-model="description">
+				Your note: <input type="text" v-model="notetext">
 			</div>
             <div>
 				Course: <input type="text" v-model="course">

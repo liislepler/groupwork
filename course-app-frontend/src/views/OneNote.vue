@@ -1,5 +1,8 @@
 <script>
     export default {
+        props: {
+		user: Object,
+        },
         data(){
             return {
                 note: {},
@@ -36,8 +39,8 @@
 		
 		<div v-if="errors.length == 0">
 			<div>Title: {{note.id}}</div>
-			<div>Description: {{note.type}}</div>
-			<div>Course: {{note.weight}}</div>
+			<div>Note: {{note.notetext}}</div>
+			<div>Course: {{note.course}}</div>
 		</div>
 		
 		<div v-else>

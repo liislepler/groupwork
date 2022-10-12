@@ -34,6 +34,8 @@
             <nav>
                 <ul>
                     <li><RouterLink to="/">Home</RouterLink></li>
+                    <li><RouterLink to="/notes">Notes</RouterLink></li>
+                    <li><RouterLink to="/create-note">Create Note</RouterLink></li>
                 </ul>
             </nav>
 
