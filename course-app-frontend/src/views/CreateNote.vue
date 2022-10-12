@@ -89,8 +89,5 @@
 
 <style scoped>
 
-.page{
-	background-color: lime;
-}
 
 </style>
