@@ -38,7 +38,7 @@
 		<h1>Note</h1>
 		
 		<div v-if="errors.length == 0">
-			<div>Title: {{note.id}}</div>
+			<div>Title: {{note.title}}</div>
 			<div>Note: {{note.notetext}}</div>
 			<div>Course: {{note.course}}</div>
 		</div>
