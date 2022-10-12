@@ -48,4 +48,16 @@
 
 <style>
 
+    body {
+        margin: 0 auto;
+        width: 400px;
+        background-color: rgb(245, 238, 229);
+    }
+    .page { 
+        background-color: white;
+        min-height: 680px;
+        height: 100%;
+        margin-top: 20px;
+    }
+
 </style>
