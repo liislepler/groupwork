@@ -68,7 +68,7 @@
 			Username: <input type="text" v-model="username">
 		</div>
 		<div>
-			Password: <input type="password" v-model="password">
+			Password: <input type="text" v-model="password">
 		</div>
 		<button @click="handleSubmission">Sign In</button>
     </div>

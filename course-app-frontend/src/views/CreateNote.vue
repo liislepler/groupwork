@@ -9,9 +9,25 @@
                 notetext: "",
                 course: "",
                 noteHasBeenCreated: false,
-                errors: []
+                errors: [],
+                courses: []
             }
         },
+        mounted(){
+			fetch("http://localhost:3000/courses").then(response => {
+				
+				if(response.status == 200){
+					
+					response.json().then(courses => {
+						this.courses = courses
+					})
+					
+				}else if(response.status == 500){
+					this.errors.push("Server couldn't send back all ads")
+				}
+				
+			})
+		},
         methods: {
             createNote(){
                 
@@ -71,10 +87,7 @@
             <div>
                 Course: <select v-model="course">
                     <option disabled value="">Select Course</option>
-                    <option value="Client-Server Communication">Client-Server Communication</option>
-                    <option value="Digital Marketing">Digital Marketing</option>
-                    <option value="Client-Side Programming">Client-Side Programming</option>
-                    <option value="Graphic Design">Graphic Design</option>
+                    <option v-for="course in courses" :value="course.title">{{ course.title }}</option>
                 </select>
 			</div>
 			<button @click="createNote">Create note</button>

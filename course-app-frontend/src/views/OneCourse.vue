@@ -34,12 +34,10 @@
 </script>
 
 <template>
-		<h1>Course</h1>
-		
-		<div v-if="errors.length == 0">
-			<div>Course title: {{course.title}}</div>
-			<div>Description: {{course.description}}</div>
-            <p>Notes list</p>
+    	<div v-if="errors.length == 0">
+		    <h1>{{course.title}}</h1>
+			<div>{{course.description}}</div>
+            <h3>Notes list</h3>
 		</div>
 		
 		<div v-else>

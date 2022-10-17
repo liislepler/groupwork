@@ -264,7 +264,7 @@ app.get("/courses/:id", function(request, response) {
 
         if (error) {
             response.status(500).end()
-        } else if (note) {
+        } else if (course) {
             response.status(200).json(course)
         } else {
             response.status(404).end()

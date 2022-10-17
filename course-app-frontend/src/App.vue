@@ -31,12 +31,18 @@
         </div>
 
         <div class="page-container">
-            <nav>
+            <nav v-if="user.isSignedIn">
                 <ul>
                     <li><RouterLink to="/">Home</RouterLink></li>
                     <li><RouterLink to="/notes">Notes</RouterLink></li>
+                    <li><RouterLink to="/courses">Courses</RouterLink></li>
                     <li><RouterLink to="/create-note">Create Note</RouterLink></li>
                     <li><RouterLink to="/create-course">Create Course</RouterLink></li>
+                </ul>
+            </nav>
+            <nav v-else>
+                <ul>
+                    <li><RouterLink to="/">Home</RouterLink></li>
                 </ul>
             </nav>
 
@@ -53,13 +59,14 @@
         margin: 0 auto;
         width: 400px;
         min-height:700px;
-        background-color: rgb(245, 238, 229);
+        background-color: rgb(255, 249, 237);
     }
     .page { 
-        background-color: white;
+        background-color: rgb(248, 231, 198);
         min-height: 680px;
         height: 100%;
         margin-top: 20px;
+        border-radius: 20px;
     }
 
 </style>

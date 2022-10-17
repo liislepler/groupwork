@@ -34,8 +34,6 @@
 				<li v-for="course in courses">
 					<RouterLink :to="`/courses/${course.id}`">
 						{{course.title}} 
-                        {{course.description}}
-                        {{course.accountId}}
 					</RouterLink>
 				</li>
 			</ul>

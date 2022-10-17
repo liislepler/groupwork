@@ -54,7 +54,7 @@
 				Username: <input type="text" v-model="account.username">
 			</div>
 			<div>
-				Password: <input type="password" v-model="account.password">
+				Password: <input type="text" v-model="account.password">
 			</div>
 			<button @click="createAccount">Create account</button>
 			
