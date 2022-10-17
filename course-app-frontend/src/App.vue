@@ -51,6 +51,7 @@
     body {
         margin: 0 auto;
         width: 400px;
+        min-height:700px;
         background-color: rgb(245, 238, 229);
     }
     .page { 

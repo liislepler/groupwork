@@ -41,7 +41,7 @@
 </script>
 
 <template>
-	<div class="page">
+
 		<h1>Create account</h1>
 		
 		<div v-if="accountHasBeenCreated">
@@ -69,7 +69,6 @@
 			
 		</div>
 		
-	</div>
 </template>
 
 <style scoped>

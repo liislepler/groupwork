@@ -53,7 +53,7 @@
 </script>
 
 <template>
-	<div class="page">
+
 		<h1>Create note</h1>
 		
 		<div v-if="noteHasBeenCreated">
@@ -84,10 +84,9 @@
 			
 		</div>
 		
-	</div>
+
 </template>
 
 <style scoped>
-
 
 </style>
