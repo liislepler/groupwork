@@ -19,16 +19,15 @@ db.run(`CREATE TABLE IF NOT EXISTS notes (
 	title TEXT,
 	notetext TEXT,
     course TEXT,
-	accountId INTEGER REFERENCES accounts(id)
+    FOREIGN KEY(accountId) REFERENCES accounts(id)
 )`)
 
 db.run(`CREATE TABLE IF NOT EXISTS courses (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	title TEXT,
 	description TEXT,
-	accountId INTEGER REFERENCES accounts(id)
+    FOREIGN KEY(accountId) REFERENCES accounts(id)
 )`)
-    // OPTIONAL TODO: Make use of foreign key constraints.
 
 // Create the app object we can use to tell express
 // how to handle incoming HTTP requests.
@@ -146,18 +145,34 @@ app.post('/accounts', function(request, response) {
 // GET /notes
 app.get("/notes", function(request, response) {
 
-    const query = "SELECT * FROM notes"
+    if (request.query.course) {
+        const query = "SELECT * FROM notes WHERE course = ?"
+        const course = request.query.course
 
-    db.all(query, function(error, notes) {
+        db.all(query, course, function(error, notes) {
 
-        if (error) {
-            console.log(error)
-            response.status(500).end()
-        } else {
-            response.status(200).json(notes)
-        }
+            if (error) {
+                console.log(error)
+                response.status(500).end()
+            } else {
+                response.status(200).json(notes)
+            }
 
-    })
+        })
+    } else {
+        const query = "SELECT * FROM notes"
+
+        db.all(query, function(error, notes) {
+
+            if (error) {
+                console.log(error)
+                response.status(500).end()
+            } else {
+                response.status(200).json(notes)
+            }
+
+        })
+    }
 
 })
 
@@ -237,18 +252,34 @@ app.post('/notes', function(request, response) {
 // GET all courses
 app.get("/courses", function(request, response) {
 
-    const query = "SELECT * FROM courses"
+    if (request.query.accountId) {
+        const query = "SELECT * FROM courses WHERE accountId = ?"
+        const accountId = request.query.accountId
 
-    db.all(query, function(error, courses) {
+        db.all(query, accountId, function(error, courses) {
 
-        if (error) {
-            console.log(error)
-            response.status(500).end()
-        } else {
-            response.status(200).json(courses)
-        }
+            if (error) {
+                console.log(error)
+                response.status(500).end()
+            } else {
+                response.status(200).json(courses)
+            }
 
-    })
+        })
+    } else {
+        const query = "SELECT * FROM courses"
+
+        db.all(query, function(error, courses) {
+
+            if (error) {
+                console.log(error)
+                response.status(500).end()
+            } else {
+                response.status(200).json(courses)
+            }
+
+        })
+    }
 
 })
 

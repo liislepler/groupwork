@@ -15,7 +15,7 @@ const router = createRouter({
     history: createWebHistory(),
     routes: [
         { path: '/', component: HomeView },
-        { path: '/:username', component: ProfileView },
+        { path: '/accounts/:id', component: ProfileView },
         { path: '/sign-in', component: SignInView },
         { path: '/sign-up', component: SignUpView },
         { path: '/sign-out', component: SignOutView },

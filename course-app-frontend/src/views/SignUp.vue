@@ -1,5 +1,8 @@
 <script>
     export default {
+        props: {
+                user: Object
+            },
         data(){
             return {
                 account: {

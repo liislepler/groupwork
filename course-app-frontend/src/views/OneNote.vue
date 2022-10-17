@@ -22,7 +22,7 @@
                     })
                     
                 }else if(response.status == 404){
-                    this.errors.push("No ad with the given id")
+                    this.errors.push("No note with the given id")
                 }else if(response.status == 500){
                     this.errors.push("Server couldn't carry out request")
                 }

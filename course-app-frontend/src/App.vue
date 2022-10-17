@@ -18,7 +18,7 @@
         <div class="user">
                 <div v-if="user.isSignedIn">
                     <button class="menu"><RouterLink to="/">Menu</RouterLink></button>
-                    <button class="profile"><RouterLink :to="`${user.username}`">{{user.username}}</RouterLink></button>
+                    <button class="profile"><RouterLink :to="`/accounts/${user.accountId}`">{{user.username}}</RouterLink></button>
                 </div>
                 <div v-else>
                     <div>

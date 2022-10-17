@@ -35,7 +35,7 @@
                         
                         response.json().then(body => {
                             
-                            this.user.isLoggedIn = true
+                            this.user.isSignedIn = true
                             this.user.accessToken = body.accessToken
                             
                             const info = jwtDecode(body.idToken)

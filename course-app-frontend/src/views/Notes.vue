@@ -30,7 +30,7 @@
 <template>
     	<div v-if="errors.length == 0">
 			<p>Here are all the notes!</p>
-			<ul>
+			<ul class="notesss">
 				<li v-for="note in notes">
 					<RouterLink :to="`/notes/${note.id}`">
 						{{note.title}} 
@@ -50,5 +50,4 @@
 </template>
 
 <style scoped>
-
 </style>

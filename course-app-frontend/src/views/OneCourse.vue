@@ -6,6 +6,7 @@
         data(){
             return {
                 course: {},
+                notes: [],
                 errors: []
             }
         },
@@ -19,10 +20,26 @@
                     
                     response.json().then(course => {
                         this.course = course
+                        
+                        fetch("http://localhost:3000/notes?course=" + this.course.title).then(response => {
+
+                            if(response.status == 200){
+                                
+                                response.json().then(notes => {
+                                    this.notes = notes
+                                })
+                                
+                            }else if(response.status == 404){
+                                this.errors.push("No notes")
+                            }else if(response.status == 500){
+                                this.errors.push("Server couldn't carry out request")
+                            }
+
+                            })
                     })
                     
                 }else if(response.status == 404){
-                    this.errors.push("No ad with the given id")
+                    this.errors.push("No course with the given id")
                 }else if(response.status == 500){
                     this.errors.push("Server couldn't carry out request")
                 }
@@ -38,6 +55,14 @@
 		    <h1>{{course.title}}</h1>
 			<div>{{course.description}}</div>
             <h3>Notes list</h3>
+            <ul>
+				<li v-for="note in notes">
+					<RouterLink :to="`/notes/${note.id}`">
+						{{note.title}} 
+                        {{note.notetext}}
+					</RouterLink>
+				</li>
+			</ul>
 		</div>
 		
 		<div v-else>
