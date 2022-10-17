@@ -5,7 +5,7 @@
         },
         data(){
             return {
-                note: {},
+                course: {},
                 errors: []
             }
         },
@@ -13,12 +13,12 @@
             
             const id = this.$route.params.id
             
-            fetch("http://localhost:3000/notes/"+id).then(response => {
+            fetch("http://localhost:3000/courses/"+id).then(response => {
                 
                 if(response.status == 200){
                     
-                    response.json().then(note => {
-                        this.note = note
+                    response.json().then(course => {
+                        this.course = course
                     })
                     
                 }else if(response.status == 404){
@@ -34,13 +34,12 @@
 </script>
 
 <template>
-
-		<h1>Note</h1>
+		<h1>Course</h1>
 		
 		<div v-if="errors.length == 0">
-			<div>Title: {{note.title}}</div>
-			<div>Note: {{note.notetext}}</div>
-			<div>Course: {{note.course}}</div>
+			<div>Course title: {{course.title}}</div>
+			<div>Description: {{course.description}}</div>
+            <p>Notes list</p>
 		</div>
 		
 		<div v-else>

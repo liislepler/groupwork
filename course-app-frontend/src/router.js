@@ -6,6 +6,9 @@ import SignOutView from './views/SignOut.vue'
 import NotesView from './views/Notes.vue'
 import CreateNoteView from './views/CreateNote.vue'
 import OneNoteView from './views/OneNote.vue'
+import CreateCourseView from './views/CreateCourse.vue'
+import CoursesView from './views/Courses.vue'
+import OneCourseView from './views/OneCourse.vue'
 
 const router = createRouter({
     history: createWebHistory(),
@@ -17,6 +20,9 @@ const router = createRouter({
         { path: '/notes', component: NotesView },
         { path: '/create-note', component: CreateNoteView },
         { path: '/notes/:id', component: OneNoteView },
+        { path: '/create-course', component: CreateCourseView },
+        { path: '/courses', component: CoursesView },
+        { path: '/courses/:id', component: OneCourseView },
     ],
 })
 

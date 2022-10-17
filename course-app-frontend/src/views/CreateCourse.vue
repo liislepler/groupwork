@@ -6,33 +6,31 @@
         data(){
             return {
                 title: "",
-                notetext: "",
-                course: "",
-                noteHasBeenCreated: false,
+                description: "",
+                courseHasBeenCreated: false,
                 errors: []
             }
         },
         methods: {
-            createNote(){
+            createCourse(){
                 
-                const note = {
+                const course = {
                     title: this.title,
-                    notetext: this.notetext,
-                    course: this.course,
+                    description: this.description,
                     accountId: this.user.accountId
                 }
                 
-                fetch("http://localhost:3000/notes", {
+                fetch("http://localhost:3000/courses", {
                     method: "POST",
                     headers: new Headers({
                         "Authorization": this.user.accessToken,
                         "Content-Type": "application/json"
                     }),
-                    body: JSON.stringify(note)
+                    body: JSON.stringify(course)
                 }).then(response => {
                     
                     if(response.status == 201){
-                        this.noteHasBeenCreated = true
+                        this.courseHasBeenCreated = true
                     }else if(response.status == 400){
                         
                         response.json().then(errors => {
@@ -54,33 +52,24 @@
 
 <template>
 
-		<h1>Create note</h1>
+		<h1>Create Course</h1>
 		
-		<div v-if="noteHasBeenCreated">
-			<p>The note has been created.</p>
+		<div v-if="courseHasBeenCreated">
+			<p>The course has been created.</p>
 		</div>
 		
 		<div v-else>
 			
 			<div>
-				Title: <input type="text" v-model="title">
+				Course title: <input type="text" v-model="title">
 			</div>
 			<div>
-				Your note: <input type="text" v-model="notetext">
+				Description: <input type="text" v-model="description">
 			</div>
-            <div>
-                Course: <select v-model="course">
-                    <option disabled value="">Select Course</option>
-                    <option value="Client-Server Communication">Client-Server Communication</option>
-                    <option value="Digital Marketing">Digital Marketing</option>
-                    <option value="Client-Side Programming">Client-Side Programming</option>
-                    <option value="Graphic Design">Graphic Design</option>
-                </select>
-			</div>
-			<button @click="createNote">Create note</button>
+			<button @click="createCourse">Create course</button>
 			
 			<div v-if="0 < errors.length">
-				<p>Couldn't create the note, because:</p>
+				<p>Couldn't create the course, because:</p>
 				<ul>
 					<li v-for="error in errors">
 						{{error}}

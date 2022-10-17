@@ -36,6 +36,7 @@
                     <li><RouterLink to="/">Home</RouterLink></li>
                     <li><RouterLink to="/notes">Notes</RouterLink></li>
                     <li><RouterLink to="/create-note">Create Note</RouterLink></li>
+                    <li><RouterLink to="/create-course">Create Course</RouterLink></li>
                 </ul>
             </nav>
 

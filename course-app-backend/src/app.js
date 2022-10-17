@@ -21,6 +21,13 @@ db.run(`CREATE TABLE IF NOT EXISTS notes (
     course TEXT,
 	accountId INTEGER
 )`)
+
+db.run(`CREATE TABLE IF NOT EXISTS courses (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	title TEXT,
+	description TEXT,
+	accountId INTEGER
+)`)
     // OPTIONAL TODO: Make use of foreign key constraints.
 
 // Create the app object we can use to tell express
@@ -141,13 +148,13 @@ app.get("/notes", function(request, response) {
 
     const query = "SELECT * FROM notes"
 
-    db.all(query, function(error, ads) {
+    db.all(query, function(error, notes) {
 
         if (error) {
             console.log(error)
             response.status(500).end()
         } else {
-            response.status(200).json(ads)
+            response.status(200).json(notes)
         }
 
     })
@@ -213,6 +220,96 @@ app.post('/notes', function(request, response) {
 
         const query = "INSERT INTO notes (title, notetext, course, accountId) VALUES (?, ?, ?, ?)"
         const values = [title, notetext, course, accountId]
+
+        db.run(query, values, function(error) {
+            if (error) {
+                response.status(500).end()
+            } else {
+                response.status(201).end()
+            }
+        })
+
+    }
+
+})
+
+
+// GET all courses
+app.get("/courses", function(request, response) {
+
+    const query = "SELECT * FROM courses"
+
+    db.all(query, function(error, courses) {
+
+        if (error) {
+            console.log(error)
+            response.status(500).end()
+        } else {
+            response.status(200).json(courses)
+        }
+
+    })
+
+})
+
+// GET /courses/57
+app.get("/courses/:id", function(request, response) {
+
+    const id = request.params.id
+
+    const query = "SELECT * FROM courses WHERE id = ?"
+    const values = [id]
+
+    db.get(query, values, function(error, course) {
+
+        if (error) {
+            response.status(500).end()
+        } else if (note) {
+            response.status(200).json(course)
+        } else {
+            response.status(404).end()
+        }
+
+    })
+
+})
+
+// POST /courses
+// Content-Type: application/json
+// Authorization: THE_ACCESS_TOKEN
+// {"type": "bike", "weight": 4, "accountId": 7}
+app.post('/courses', function(request, response) {
+
+    const accessToken = request.get("Authorization")
+
+    // TODO: "oiuiuytrtefxfx" is also used at another place;
+    // better to put it in a constant, and refer to the constant
+    // at both places.
+    const payload = jsonwebtoken.verify(accessToken, "oiuiuytrtefxfx")
+
+    const title = request.body.title
+    const description = request.body.description
+    const accountId = request.body.accountId
+
+    // Send back 401 if the user tries to create an ad for
+    // another account than the one he is logged in on.
+    if (accountId != payload.accountId) {
+        response.status(401).end()
+        return
+    }
+
+    // Do validation.
+    const errorCodes = []
+
+
+    // If we have validation errors, send them back,
+    // otherwise insert the ad into the database.
+    if (0 < errorCodes.length) {
+        response.status(400).json(errorCodes)
+    } else {
+
+        const query = "INSERT INTO courses (title, description, accountId) VALUES (?, ?, ?)"
+        const values = [title, description, accountId]
 
         db.run(query, values, function(error) {
             if (error) {
