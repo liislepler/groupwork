@@ -19,14 +19,14 @@ db.run(`CREATE TABLE IF NOT EXISTS notes (
 	title TEXT,
 	notetext TEXT,
     course TEXT,
-	accountId INTEGER
+	accountId INTEGER REFERENCES accounts(id)
 )`)
 
 db.run(`CREATE TABLE IF NOT EXISTS courses (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	title TEXT,
 	description TEXT,
-	accountId INTEGER
+	accountId INTEGER REFERENCES accounts(id)
 )`)
     // OPTIONAL TODO: Make use of foreign key constraints.
 

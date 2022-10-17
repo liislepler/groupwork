@@ -17,10 +17,8 @@
     <div class="page">
         <div class="user">
                 <div v-if="user.isSignedIn">
-                    <p><b>{{user.username}}</b>
-                    <br>
-                    Account ID: <b>{{user.accountId}}</b></p>
-                    <button class="signout"><RouterLink to="/sign-out">Sign Out</RouterLink></button>
+                    <button class="menu"><RouterLink to="/">Menu</RouterLink></button>
+                    <button class="profile"><RouterLink :to="`${user.username}`">{{user.username}}</RouterLink></button>
                 </div>
                 <div v-else>
                     <div>
@@ -30,26 +28,9 @@
                 </div>
         </div>
 
-        <div class="page-container">
-            <nav v-if="user.isSignedIn">
-                <ul>
-                    <li><RouterLink to="/">Home</RouterLink></li>
-                    <li><RouterLink to="/notes">Notes</RouterLink></li>
-                    <li><RouterLink to="/courses">Courses</RouterLink></li>
-                    <li><RouterLink to="/create-note">Create Note</RouterLink></li>
-                    <li><RouterLink to="/create-course">Create Course</RouterLink></li>
-                </ul>
-            </nav>
-            <nav v-else>
-                <ul>
-                    <li><RouterLink to="/">Home</RouterLink></li>
-                </ul>
-            </nav>
-
             <main>
                 <RouterView :user="user"></RouterView>
             </main>
-        </div>
     </div>
 </template>
 
@@ -67,6 +48,13 @@
         height: 100%;
         margin-top: 20px;
         border-radius: 20px;
+    }
+    li {
+        list-style: none;
+    }
+    a {
+        color: black;
+        text-decoration: none;
     }
 
 </style>

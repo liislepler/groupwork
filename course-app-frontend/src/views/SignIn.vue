@@ -12,6 +12,7 @@
             return {
                 username: "",
                 password: "",
+                message: ""
             }
         },
         methods: {
@@ -46,6 +47,7 @@
 
                         console.log("signed in")
                         this.user.isSignedIn = true
+                        this.message = "You're logged in!"
                         
                     }else if(response.status == 401){
                         this.errors.push("Not authorized!")
@@ -71,6 +73,10 @@
 			Password: <input type="text" v-model="password">
 		</div>
 		<button @click="handleSubmission">Sign In</button>
+    </div>
+
+    <div v-if=user.isSignedIn>
+        <h3>{{message}}</h3>
     </div>
 </template>
 

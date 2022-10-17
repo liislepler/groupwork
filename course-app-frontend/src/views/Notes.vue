@@ -19,7 +19,7 @@
 					})
 					
 				}else if(response.status == 500){
-					this.errors.push("Server couldn't send back all ads")
+					this.errors.push("Server couldn't send back all notes")
 				}
 				
 			})
