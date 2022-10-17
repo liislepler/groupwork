@@ -82,7 +82,7 @@
 				Title: <input type="text" v-model="title">
 			</div>
 			<div>
-				Your note: <input type="text" v-model="notetext">
+				Your note: <textarea type="text" v-model="notetext"></textarea>
 			</div>
             <div>
                 Course: <select v-model="course">
